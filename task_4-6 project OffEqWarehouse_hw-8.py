@@ -23,7 +23,7 @@ class OfficeEquipmentWarehouse:
     def in_store(pos_data):
         while True:
             try:
-                quantity_in = int(input(f'Enter additional quantity of {pos_data["good name"]}: '))
+                quantity_in = int(input(f'Enter incoming quantity of {pos_data["good name"]}: '))
             except (ValueError, NameError, TypeError) as err:
                 print(f'Attention! {err}!')
             else:
@@ -32,7 +32,7 @@ class OfficeEquipmentWarehouse:
 
     @staticmethod
     def out_store(pos_data):
-        department = input(f'Enter department where {pos_data["good name"]} to transfer to: ')
+        department = input(f'Enter a name of department where {pos_data["good name"]} to transfer to: ')
         while True:
             try:
                 quantity_out = int(input(f'Enter quantity for transfer to {department} department: '))
@@ -50,25 +50,8 @@ class OfficeEquipment:
         self.pos_data = []
         self.pos_card = {}
 
-    @abstractmethod
-    def get_card_filled(self):
-        pass
-
-    def __str__(self):
-        pass
-
-
-class Printer(OfficeEquipment):
-    def __init__(self):
-        self.pos_data = []
-        self.pos_card = {}
-        self.subclass = 'Printer'
-
     @property
     def get_card_filled(self):
-        card_form = ['subclass', 'good name', 'mode', 'measurement unit', 'quantity', 'price']
-        subclass = self.subclass
-        self.pos_data.append(subclass)
         name = input(f'enter {self.subclass} name: ').capitalize()
         self.pos_data.append(name)
         mode = input('enter mode: ')
@@ -90,8 +73,24 @@ class Printer(OfficeEquipment):
                 print(f'Attention! {err}!')
             else:
                 self.pos_data.append(price)
-                break
-        self.pos_card = dict(zip(card_form, self.pos_data))
+                return self.pos_data
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+
+class Printer(OfficeEquipment):
+    def __init__(self):
+        super(Printer, self).__init__()
+        self.subclass = 'Printer'
+
+    @property
+    def get_card_filled(self):
+        super(Printer, self).get_card_filled
+        card_form = ['subclass', 'good name', 'mode', 'measurement unit', 'quantity', 'price']
+        subclass = self.subclass
+        self.pos_data.insert(0, subclass)
         card_form.append('color')
         is_color = input('is it color? Yes/No: ')
         self.pos_data.append('multicolor' if is_color.lower() == 'yes' else 'mono')
@@ -117,25 +116,15 @@ class Printer(OfficeEquipment):
 
 class Scanner(OfficeEquipment):
     def __init__(self):
-        self.pos_data = []
-        self.pos_card = {}
+        super(Scanner, self).__init__()
         self.subclass = 'Scanner'
 
     @property
     def get_card_filled(self):
+        super(Scanner, self).get_card_filled
         card_form = ['subclass', 'good name', 'mode', 'measurement unit', 'quantity', 'price']
         subclass = self.subclass
-        self.pos_data.append(subclass)
-        name = input(f'enter {self.subclass} name: ').capitalize()
-        self.pos_data.append(name)
-        mode = input('enter mode: ')
-        self.pos_data.append(mode)
-        unit = input('enter measurement unit: ')
-        self.pos_data.append(unit)
-        quantity = int(input('enter quantity: '))
-        self.pos_data.append(quantity)
-        price = int(input('enter price: '))
-        self.pos_data.append(price)
+        self.pos_data.insert(0, subclass)
         card_form.append('image resolution')
         image_resolution = input('enter image resolution: ')
         self.pos_data.append(image_resolution)
@@ -157,25 +146,15 @@ class Scanner(OfficeEquipment):
 
 class Xerox(OfficeEquipment):
     def __init__(self):
-        self.pos_data = []
-        self.pos_card = {}
+        super(Xerox, self).__init__()
         self.subclass = 'Xerox'
 
     @property
     def get_card_filled(self):
+        super(Xerox, self).get_card_filled
         card_form = ['subclass', 'good name', 'mode', 'measurement unit', 'quantity', 'price']
         subclass = self.subclass
-        self.pos_data.append(subclass)
-        name = input(f'enter {self.subclass} name: ').capitalize()
-        self.pos_data.append(name)
-        mode = input('enter mode: ')
-        self.pos_data.append(mode)
-        unit = input('enter measurement unit: ')
-        self.pos_data.append(unit)
-        quantity = int(input('enter quantity: '))
-        self.pos_data.append(quantity)
-        price = int(input('enter price: '))
-        self.pos_data.append(price)
+        self.pos_data.insert(0, subclass)
         card_form.append('copy speed')
         copy_speed = input('enter copy speed, copies in minutes: ')
         self.pos_data.append(copy_speed)
@@ -193,15 +172,17 @@ class Xerox(OfficeEquipment):
         return f'technical service must be done every 2 months'
 
 
+
+
 pos1 = Printer()
 pos1_card = pos1.get_card_filled
 print(type(pos1_card))
 print(pos1_card)
 print(pos1, '\n')
 store_card1 = pos1_card
-store_card1 = OfficeEquipmentWarehouse().in_store(pos1_card)
+store_card1 = OfficeEquipmentWarehouse().in_store(store_card1)
 print(store_card1)
-store_card1 = OfficeEquipmentWarehouse().out_store(pos1_card)
+store_card1 = OfficeEquipmentWarehouse().out_store(store_card1)
 print(store_card1)
 print(pos1.let_print_go(pos1_card['good name'], True, 1))
 print('---------')
